@@ -2,7 +2,7 @@
 
 **A self-maintaining operating system for your AI-powered workflow — connecting Claude Code + Amazon Quick into one coordinated brain.**
 
-`🟢 Status: Operational` · `License: MIT`
+![Status](https://img.shields.io/badge/Status-Operational-brightgreen) ![License](https://img.shields.io/badge/License-MIT-blue)
 
 ---
 
