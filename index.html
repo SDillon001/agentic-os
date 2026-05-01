@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agentic OS Setup Guide</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%23000716'/><g fill='none' stroke='%23539fe5' stroke-width='3' stroke-linecap='round'><circle cx='32' cy='18' r='4.5' fill='%23539fe5'/><circle cx='16' cy='36' r='4.5' fill='%23539fe5'/><circle cx='48' cy='36' r='4.5' fill='%23539fe5'/><circle cx='32' cy='50' r='4.5' fill='%23539fe5'/><path d='M32 22 L18 33'/><path d='M32 22 L46 33'/><path d='M20 39 L30 48'/><path d='M44 39 L34 48'/><path d='M20 36 L44 36'/></g></svg>">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#000716;--surface:#0f1b2d;--elevated:#192534;
+  --accent:#539fe5;--accent2:#0972d3;--border:#414d5c;
+  --text:#d1d5db;--text-dim:#8b99a7;--text-bright:#fafafa;
+  --green:#6aaf35;--blue:#89bdee;--yellow:#e0ca57;--orange:#ec7211;--purple:#c084fc;
+  --radius:12px;--font:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono','SF Mono','Fira Code',monospace;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.7;font-size:16px}
+a{color:var(--accent);text-decoration:none;transition:color .2s}
+a:hover{color:var(--blue)}
+h1,h2,h3,h4{color:var(--text-bright);font-weight:600}
+code{font-family:var(--mono);font-size:.9em;background:var(--elevated);padding:2px 6px;border-radius:4px;color:var(--green)}
+/* Hero */
+.hero{background:var(--bg);padding:12px 0 28px;text-align:center}
+.hero h1{font-size:1.8rem;margin-bottom:4px;color:var(--text-bright)}
+.hero .subtitle{font-size:.95rem;color:var(--text-dim);max-width:720px;margin:0 auto 6px}
+.hero .author{font-size:.95rem;color:var(--accent);opacity:.9;margin-bottom:12px}
+.hero .author a{color:var(--accent);text-decoration:none}
+.hero .author a:hover{color:var(--blue);text-decoration:underline}
+.hero .badges{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.badge{background:rgba(83,159,229,.12);border:1px solid rgba(83,159,229,.3);padding:3px 10px;border-radius:12px;font-size:.72rem;color:var(--accent)}
+/* Layout */
+.layout{display:flex;max-width:1600px;margin:0 auto;position:relative}
+/* Sidebar */
+.sidebar{width:280px;position:sticky;top:230px;align-self:flex-start;overflow:visible;padding:0 12px;margin-top:80px;flex-shrink:0;background:var(--bg);z-index:10}
+.sidebar h3{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:1.4px;color:var(--text-bright);margin:14px 0 4px;padding-left:10px}
+.sidebar h3:first-child{margin-top:0}
+.toc-link{display:flex;align-items:center;gap:10px;padding:3px 10px;border-radius:4px;font-size:.98rem;line-height:1.3;color:var(--text);transition:color .15s, background .15s}
+.toc-link:hover{color:var(--accent);background:rgba(83,159,229,.08)}
+.toc-link.active{color:var(--accent);background:rgba(83,159,229,.1)}
+.toc-link.visited,.toc-link.sub.visited{color:var(--accent)}
+.toc-link.active,.toc-link.sub.active{color:var(--accent)}
+.toc-link.visited .toc-num,.toc-link.active .toc-num{background:var(--accent2);border-color:var(--accent2);color:#fff}
+.toc-num{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--elevated);border:1px solid var(--border);color:var(--text-dim);font-size:.8rem;font-weight:600;display:inline-flex;align-items:center;justify-content:center;font-family:var(--mono)}
+.toc-link:hover .toc-num{background:var(--accent2);border-color:var(--accent2);color:#fff}
+.toc-sub-group{margin:1px 0 2px 20px;padding-left:10px;border-left:1px solid var(--border)}
+.toc-link.sub{padding:2px 10px;font-size:.9rem;color:var(--text-dim)}
+.toc-link.sub:hover{color:var(--accent)}
+.sidebar-toggle{display:none;position:fixed;bottom:20px;right:20px;z-index:100;width:48px;height:48px;border-radius:50%;background:var(--accent2);color:#fff;border:none;font-size:1.4rem;cursor:pointer;box-shadow:0 4px 20px rgba(37,99,235,.4)}
+.back-to-top{position:fixed;bottom:24px;right:24px;width:40px;height:40px;border-radius:50%;background:var(--surface);color:var(--text-dim);border:1px solid var(--border);font-size:1rem;cursor:pointer;display:none;align-items:center;justify-content:center;z-index:50;transition:all .2s;font-family:var(--font);line-height:1}
+.back-to-top.visible{display:flex}
+.back-to-top:hover{color:var(--accent);border-color:var(--accent)}
+/* Main */
+.main{flex:1;padding:40px 56px;max-width:1160px;min-width:0;margin:0 auto}
+/* Cards */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:32px;margin-bottom:28px;transition:border-color .3s}
+.card:hover{border-color:rgba(83,159,229,.3)}
+.card h2{font-size:1.6rem;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.card h3{font-size:1.15rem;margin:20px 0 10px;color:var(--accent)}
+.card h4{font-size:1rem;margin:16px 0 8px;color:var(--text-dim)}
+.card p,.card li{margin-bottom:8px}
+.card ul,.card ol{padding-left:20px;margin-bottom:16px}
+.card li{margin-bottom:6px}
+.step-num{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:var(--elevated);border:1px solid var(--border);color:var(--text-dim);font-size:.85rem;font-weight:700;margin-right:10px;flex-shrink:0;transition:background .3s, border-color .3s, color .3s}
+.step-num.visited,.step-num.active{background:var(--accent2);border-color:var(--accent2);color:#fff}
+section.card.active h2{color:var(--accent)}
+/* Quick Start card */
+.quickstart{border-color:rgba(83,159,229,.5);background:linear-gradient(180deg,rgba(9,114,211,.08) 0%,var(--surface) 100%)}
+.quickstart h2{border-bottom-color:rgba(83,159,229,.3);display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.quickstart h2 .qs-btn{font-size:.85rem;padding:8px 16px}
+.qs-actions{display:flex;gap:10px;margin:16px 0;flex-wrap:wrap}
+.qs-btn{background:var(--elevated);color:var(--text);border:1px solid var(--border);padding:9px 18px;border-radius:6px;font-size:.88rem;font-weight:500;cursor:pointer;font-family:var(--font);transition:all .2s;display:inline-flex;align-items:center;gap:6px}
+.qs-btn:hover{border-color:var(--accent);color:var(--accent)}
+.qs-btn.qs-primary{background:var(--accent2);border-color:var(--accent2);color:#fff}
+.qs-btn.qs-primary:hover{background:var(--accent);border-color:var(--accent);color:#fff}
+.qs-btn.copied{border-color:var(--green);color:var(--green);background:var(--elevated)}
+/* Code blocks */
+.code-wrap{position:relative;margin:16px 0;border-radius:8px;overflow:hidden;border:1px solid var(--border)}
+.code-header{display:flex;justify-content:space-between;align-items:center;padding:6px 12px;background:var(--elevated);border-bottom:1px solid var(--border);font-size:.75rem;color:var(--text-dim)}
+.copy-btn{background:none;border:1px solid var(--border);color:var(--text-dim);padding:3px 10px;border-radius:4px;cursor:pointer;font-size:.72rem;font-family:var(--font);transition:all .2s}
+.copy-btn:hover{border-color:var(--accent);color:var(--accent)}
+.copy-btn.copied{border-color:var(--green);color:var(--green)}
+pre{background:var(--elevated);padding:16px;overflow-x:auto;font-family:var(--mono);font-size:.85rem;line-height:1.6;margin:0;color:var(--text)}
+pre .kw{color:var(--blue)}
+pre .str{color:var(--green)}
+pre .fn{color:var(--yellow)}
+pre .cm{color:#64748b;font-style:italic}
+pre .tag{color:var(--orange)}
+pre .attr{color:var(--purple)}
+/* Architecture diagram */
+.arch-svg-wrap{position:relative;margin:24px 0;background:var(--elevated);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
+.arch-svg-wrap svg{width:100%;height:auto;display:block}
+.arch-expand{position:absolute;top:10px;right:10px;background:var(--surface);color:var(--text-dim);border:1px solid var(--border);width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:6px;font-size:1.7rem;line-height:1;cursor:pointer;font-family:var(--font);transition:all .2s;z-index:2}
+.arch-expand:hover{color:var(--accent);border-color:var(--accent)}
+/* Arch modal */
+.arch-modal{display:none;position:fixed;inset:0;background:rgba(0,7,22,.92);z-index:1000;padding:24px}
+.arch-modal.open{display:flex;flex-direction:column}
+.arch-modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:10px}
+.arch-modal-title{font-size:.9rem;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase}
+.arch-modal-controls{display:flex;gap:6px}
+.arch-ctrl{background:var(--elevated);color:var(--text);border:1px solid var(--border);width:36px;height:36px;border-radius:6px;font-size:1.1rem;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;transition:all .15s}
+.arch-ctrl:hover{color:var(--accent);border-color:var(--accent)}
+.arch-ctrl.close{width:auto;padding:0 14px;font-size:.85rem}
+.arch-modal-canvas{flex:1;overflow:hidden;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);position:relative;cursor:grab}
+.arch-modal-canvas.dragging{cursor:grabbing}
+.arch-modal-canvas svg{position:absolute;top:50%;left:50%;width:100%;height:100%;transform-origin:0 0;user-select:none}
+.arch-diagram{display:flex;flex-direction:column;gap:0;margin:24px 0}
+.arch-layer{padding:18px 24px;text-align:center;position:relative;border:1px solid}
+.arch-layer:first-child{border-radius:var(--radius) var(--radius) 0 0}
+.arch-layer+.arch-layer{border-top:none}
+.arch-layer .layer-label{font-size:.7rem;text-transform:uppercase;letter-spacing:1.5px;opacity:.7;margin-bottom:2px}
+.arch-layer .layer-title{font-weight:700;font-size:1.05rem;margin-bottom:4px}
+.arch-layer .layer-desc{font-size:.8rem;opacity:.7}
+.arch-layer.l-blue{background:rgba(37,99,235,.12);border-color:rgba(37,99,235,.35)}
+.arch-layer.l-blue .layer-title{color:#60a5fa}
+.arch-layer.l-purple{background:rgba(124,58,237,.1);border-color:rgba(124,58,237,.3)}
+.arch-layer.l-purple .layer-title{color:#a78bfa}
+.arch-layer.l-green{background:rgba(5,150,105,.1);border-color:rgba(5,150,105,.3)}
+.arch-layer.l-green .layer-title{color:#34d399}
+.arch-layer.l-amber{background:rgba(217,119,6,.1);border-color:rgba(217,119,6,.3);border-radius:0 0 var(--radius) var(--radius)}
+.arch-layer.l-amber .layer-title{color:#fbbf24}
+.arch-foundation{display:flex;gap:12px;margin-top:16px;justify-content:center;flex-wrap:wrap}
+.arch-foundation .found-box{flex:1;min-width:180px;max-width:300px;padding:14px 18px;border-radius:var(--radius);text-align:center;border:1px dashed}
+.found-box.f-slate{background:rgba(148,163,184,.06);border-color:rgba(148,163,184,.25)}
+.found-box.f-slate .layer-title{color:var(--text-dim)}
+.arch-arrow{text-align:center;color:var(--text-dim);font-size:.75rem;padding:6px 0;letter-spacing:2px}
+/* Table */
+.table-wrap{overflow-x:auto;margin:16px 0}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th{background:var(--elevated);padding:10px 14px;text-align:left;font-weight:600;color:var(--accent);border-bottom:2px solid var(--accent2)}
+td{padding:10px 14px;border-bottom:1px solid var(--border)}
+tr:hover td{background:rgba(83,159,229,.04)}
+/* Flow diagram */
+.flow{display:flex;flex-direction:column;gap:0;margin:16px 0;font-size:.82rem;font-family:var(--mono);line-height:1.4}
+.flow-line{padding:1px 0;color:var(--text-dim);white-space:pre-wrap}
+.flow-line .hl{color:var(--accent)}
+.flow-line .fn-hl{color:var(--yellow)}
+.flow-line .gr{color:var(--green)}
+/* Emoji list */
+.emoji-list{list-style:none;padding-left:0}
+.emoji-list li{padding:4px 0}
+/* Responsive */
+@media(max-width:900px){
+  .sidebar{display:none;position:fixed;top:0;left:0;width:280px;height:100vh;z-index:200;box-shadow:4px 0 30px rgba(0,0,0,.5)}
+  .sidebar.open{display:block}
+  .sidebar-toggle{display:block}
+  .main{padding:24px 20px}
+  .hero{padding:48px 20px 40px}
+  .hero h1{font-size:1.8rem}
+  .card{padding:20px}
+}
+</style>
+</head>
+<body>
+
+<!-- Sidebar Toggle (mobile) -->
+<button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle navigation">☰</button>
+<button class="back-to-top" id="backToTop" aria-label="Back to top" title="Back to top">↑</button>
+
+<div class="layout">
+
+<!-- Sidebar TOC -->
+<nav class="sidebar">
+  <h3>Get Started</h3>
+  <a class="toc-link" href="#quick-start">Quick Start (Paste to AQ)</a>
+
+  <h3>Overview</h3>
+  <a class="toc-link" href="#what-this-is">What You Get</a>
+  <a class="toc-link" href="#architecture">Architecture Overview</a>
+  <a class="toc-link" href="#how-it-connects">How It All Connects</a>
+
+  <h3>Setup Steps</h3>
+  <a class="toc-link" href="#step1"><span class="toc-num">1</span>Folder Structure</a>
+  <div class="toc-sub-group">
+    <a class="toc-link sub" href="#identity-files">Identity Files</a>
+    <a class="toc-link sub" href="#brand-context">Brand Context</a>
+  </div>
+  <a class="toc-link" href="#step2"><span class="toc-num">2</span>Knowledge Pipeline</a>
+  <div class="toc-sub-group">
+    <a class="toc-link sub" href="#session-tracker">Session Tracker Hook</a>
+    <a class="toc-link sub" href="#session-finalizer">Session Finalizer</a>
+    <a class="toc-link sub" href="#compound-synthesis">Compound Synthesis</a>
+    <a class="toc-link sub" href="#tag-your-work">Tag Your Work</a>
+  </div>
+  <a class="toc-link" href="#step3"><span class="toc-num">3</span>Self-Maintenance</a>
+  <div class="toc-sub-group">
+    <a class="toc-link sub" href="#heartbeat">Heartbeat</a>
+    <a class="toc-link sub" href="#skill-manifest">Skill Manifest</a>
+    <a class="toc-link sub" href="#wrap-up">Wrap-Up Skill</a>
+  </div>
+  <a class="toc-link" href="#step4"><span class="toc-num">4</span>Amazon Quick</a>
+  <div class="toc-sub-group">
+    <a class="toc-link sub" href="#connect-tools">Connect Tools</a>
+    <a class="toc-link sub" href="#morning-brief">Morning Brief</a>
+    <a class="toc-link sub" href="#context-sync">Context Sync</a>
+  </div>
+  <a class="toc-link" href="#step5"><span class="toc-num">5</span>Retro Sweep</a>
+
+  <h3>Reference</h3>
+  <a class="toc-link" href="#customization">Customization Tips</a>
+  <a class="toc-link" href="#troubleshooting">Troubleshooting</a>
+</nav>
+
+<!-- Main Content -->
+<main class="main">
+
+<!-- Hero -->
+<header class="hero">
+  <h1>Agentic OS Setup Guide</h1>
+  <p class="subtitle">An Agentic Operating System with Amazon Quick + Claude Code</p>
+  <p class="author"><strong>By:</strong> Steve Dillon; <a href="https://github.com/dsdillon" target="_blank" rel="noopener">@dsdillon</a></p>
+  <div class="badges">
+    <span class="badge">🧠 Compound Knowledge</span>
+    <span class="badge">🌅 Daily Morning Brief</span>
+    <span class="badge">🔄 Self-Maintaining</span>
+    <span class="badge">🤝 Cross-Platform Context</span>
+  </div>
+</header>
+
+<!-- Quick Start -->
+<section class="card quickstart" id="quick-start">
+  <h2>⚡ Quick Start <a class="qs-btn qs-primary" href="agentic-os.zip" download>⬇ Download .zip</a></h2>
+  <p>The zip contains everything — hook scripts and installer for Claude Code, plus an <code>AQ_SETUP.md</code> that Amazon Quick reads to configure the orchestration side.</p>
+
+  <h3 style="margin-top:20px">1. Run the installer (Claude Code side)</h3>
+  <p>Paste these into Terminal, or ask Claude Code to run them for you — it can execute the commands and answer the installer's prompts.</p>
+  <div class="code-wrap">
+    <div class="code-header"><span>bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre>unzip agentic-os.zip
+cd scripts
+chmod +x install.sh
+./install.sh</pre>
+  </div>
+
+  <h3 style="margin-top:24px">2. Point Amazon Quick at the .zip</h3>
+  <p>Open Amazon Quick Suite Desktop and drag <code>scripts/AQ_SETUP.md</code> into the chat, or paste this pointer:</p>
+  <div class="code-wrap">
+    <div class="code-header"><span>Paste into Amazon Quick</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre id="aqPrompt">Read the file AQ_SETUP.md from the agentic-os.zip I just
+unzipped (path: /absolute/path/to/scripts/AQ_SETUP.md — update
+this to your actual path, or just drag the file into this chat).
+
+Follow its instructions step by step. Ask me to confirm before
+each step. Do not assume defaults I haven't given you.
+</pre>
+  </div>
+</section>
+
+<!-- What You Get -->
+<section class="card" id="what-this-is">
+  <h2>What You Get</h2>
+  <p>An <strong>Agentic OS</strong> is a system where your AI tools (Claude Code and Amazon Quick) share context, memory, and skill awareness through a common knowledge base — so they work as one coordinated system rather than isolated chatbots.</p>
+  <ul class="emoji-list">
+    <li>🧠 <strong>Compound knowledge</strong> — every session's insights accumulate and compound over time</li>
+    <li>🌅 <strong>Daily morning brief</strong> — Slack DM + email with action items, calendar, Slack highlights, Asana tasks</li>
+    <li>🔄 <strong>Self-maintaining</strong> — the system syncs its own skill registry, closes idle sessions, and regenerates itself</li>
+    <li>🤝 <strong>Cross-platform context</strong> — Claude Code knows what happened in Slack/email, Amazon Quick knows what you built in code</li>
+  </ul>
+  <h3>Prerequisites</h3>
+  <ul>
+    <li>Claude Code installed and configured</li>
+    <li>Amazon Quick (QuickSuite Desktop) with Slack, Outlook, and Asana connected</li>
+    <li>An Obsidian vault (or any local markdown folder structure)</li>
+  </ul>
+</section>
+
+<!-- Architecture Overview -->
+<section class="card" id="architecture">
+  <h2>Architecture Overview</h2>
+  <p>Two agents, one shared brain:</p>
+  <ul>
+    <li><strong>Amazon Quick</strong> — orchestration layer. Knowledge graph, long-term memory, scheduled agents, and native integrations with Slack, email, Asana, and calendar.</li>
+    <li><strong>Claude Code</strong> — hands-on coding agent. Edits local files, runs the terminal, executes skills.</li>
+    <li><strong>Obsidian vault</strong> (or any local folder) — shared context both agents read and write to.</li>
+    <li><strong>Compound knowledge pipeline</strong> — auto-extracts insights from every Claude Code session and synthesizes them into themed knowledge available to both agents.</li>
+    <li><strong>Morning brief agent</strong> — runs daily, pulls from every connected tool, and delivers a prioritized action-items summary.</li>
+  </ul>
+  <div class="arch-svg-wrap" id="archDiagram">
+    <button class="arch-expand" type="button" id="archExpandBtn" aria-label="Expand diagram" title="Expand">⤢</button>
+    <svg id="archSvg" viewBox="0 0 820 560" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Agentic OS architecture diagram" preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="#8b99a7"/>
+        </marker>
+        <style>
+          .n{fill:#192534;stroke-width:1.5}
+          .t-title{fill:#fafafa;font:600 13px -apple-system,'Segoe UI',sans-serif;text-anchor:middle}
+          .t-label{fill:#8b99a7;font:500 9px -apple-system,'Segoe UI',sans-serif;text-transform:uppercase;letter-spacing:1.2px;text-anchor:middle}
+          .t-desc{fill:#d1d5db;font:400 10.5px -apple-system,'Segoe UI',sans-serif;text-anchor:middle}
+          .t-edge{fill:#8b99a7;font:500 10px -apple-system,'Segoe UI',sans-serif;text-anchor:middle}
+          .edge{stroke:#8b99a7;stroke-width:1.5;fill:none}
+          .edge-dash{stroke:#414d5c;stroke-width:1.25;stroke-dasharray:4 3;fill:none}
+        </style>
+      </defs>
+
+      <!-- AMAZON QUICK -->
+      <rect class="n" x="210" y="20" width="400" height="70" rx="8" stroke="#0972d3"/>
+      <text class="t-label" x="410" y="40">Orchestration Layer</text>
+      <text class="t-title" x="410" y="58" fill="#89bdee">AMAZON QUICK</text>
+      <text class="t-desc" x="410" y="78">Knowledge Graph · Scheduled Agents · Slack / Email / Asana / Calendar</text>
+
+      <!-- COMPOUND KNOWLEDGE -->
+      <rect class="n" x="210" y="130" width="400" height="70" rx="8" stroke="#a78bfa"/>
+      <text class="t-label" x="410" y="150">Learning &amp; Memory Bridge</text>
+      <text class="t-title" x="410" y="168" fill="#c084fc">COMPOUND KNOWLEDGE</text>
+      <text class="t-desc" x="410" y="188">[LEARNING] [PATTERN] [DECISION] → Auto-synthesis</text>
+
+      <!-- SELF-MAINTENANCE -->
+      <rect class="n" x="210" y="240" width="400" height="70" rx="8" stroke="#6aaf35"/>
+      <text class="t-label" x="410" y="260">Heartbeat · Wrap-up · Manifest</text>
+      <text class="t-title" x="410" y="278" fill="#6aaf35">SELF-MAINTENANCE</text>
+      <text class="t-desc" x="410" y="298">Session lifecycle · Skill registry · 30-min auto-close</text>
+
+      <!-- SHARED CONTEXT (vault) -->
+      <rect class="n" x="210" y="350" width="400" height="70" rx="8" stroke="#e0ca57"/>
+      <text class="t-label" x="410" y="370">Obsidian Vault / Local Folder</text>
+      <text class="t-title" x="410" y="388" fill="#e0ca57">SHARED CONTEXT</text>
+      <text class="t-desc" x="410" y="408">Identity · Brand Context · Knowledge · Session Logs</text>
+
+      <!-- Vertical edges between layers -->
+      <line class="edge" x1="410" y1="90"  x2="410" y2="128" marker-end="url(#arrow)"/>
+      <line class="edge" x1="410" y1="200" x2="410" y2="238" marker-end="url(#arrow)"/>
+      <line class="edge" x1="410" y1="310" x2="410" y2="348" marker-end="url(#arrow)"/>
+
+      <!-- CLAUDE CODE (left foundation) -->
+      <rect class="n" x="40" y="460" width="300" height="80" rx="8" stroke="#414d5c" stroke-dasharray="5 4"/>
+      <text class="t-label" x="190" y="481">Local Coding Agent</text>
+      <text class="t-title" x="190" y="500">CLAUDE CODE</text>
+      <text class="t-desc" x="190" y="520">File editing · Terminal · Skills · Hooks</text>
+
+      <!-- EXTERNAL TOOLS (right foundation) -->
+      <rect class="n" x="480" y="460" width="300" height="80" rx="8" stroke="#414d5c" stroke-dasharray="5 4"/>
+      <text class="t-label" x="630" y="481">Dev Environment</text>
+      <text class="t-title" x="630" y="500">EXTERNAL TOOLS</text>
+      <text class="t-desc" x="630" y="520">Obsidian · Git · Deploy Target · Browser</text>
+
+      <!-- Shared-filesystem edges from vault down to both foundations -->
+      <path class="edge-dash" d="M 330 420 Q 260 440 190 460" marker-end="url(#arrow)"/>
+      <path class="edge-dash" d="M 490 420 Q 560 440 630 460" marker-end="url(#arrow)"/>
+      <text class="t-edge" x="410" y="445">shared filesystem</text>
+    </svg>
+  </div>
+</section>
+
+<!-- How It All Connects -->
+<section class="card" id="how-it-connects">
+  <h2>How It All Connects</h2>
+  <div class="flow">
+    <div class="flow-line">You work in <span class="hl">Claude Code</span></div>
+    <div class="flow-line">&nbsp;&nbsp;&nbsp;&nbsp;↓ <span class="cm">(every message)</span></div>
+    <div class="flow-line"><span class="fn-hl">user-prompt-tracker.sh</span> → creates/appends session file</div>
+    <div class="flow-line">&nbsp;&nbsp;&nbsp;&nbsp;↓ <span class="cm">(every 5 min)</span></div>
+    <div class="flow-line"><span class="fn-hl">session-finalizer.sh</span></div>
+    <div class="flow-line">&nbsp;&nbsp;&nbsp;&nbsp;├── Renames sessions</div>
+    <div class="flow-line">&nbsp;&nbsp;&nbsp;&nbsp;├── Extracts <span class="hl">[LEARNING]</span> <span class="hl">[PATTERN]</span> <span class="hl">[DECISION]</span> tags</div>
+    <div class="flow-line">&nbsp;&nbsp;&nbsp;&nbsp;├── Auto-closes idle sessions <span class="cm">(30 min)</span></div>
+    <div class="flow-line">&nbsp;&nbsp;&nbsp;&nbsp;├── Triggers <span class="fn-hl">synthesize-knowledge.sh</span> → <span class="gr">COMPOUND_KNOWLEDGE.md</span></div>
+    <div class="flow-line">&nbsp;&nbsp;&nbsp;&nbsp;└── Triggers <span class="fn-hl">generate-manifest.sh</span> → <span class="gr">SKILL_MANIFEST.md</span></div>
+    <div class="flow-line">&nbsp;</div>
+    <div class="flow-line">Next CC session → heartbeat reads <span class="gr">user.md</span> + <span class="gr">COMPOUND_KNOWLEDGE.md</span> + <span class="gr">SKILL_MANIFEST.md</span></div>
+    <div class="flow-line">&nbsp;</div>
+    <div class="flow-line">Daily at 6 AM → <span class="hl">AQ morning brief agent</span></div>
+    <div class="flow-line">&nbsp;&nbsp;&nbsp;&nbsp;├── Scans Slack, email, Asana, calendar, CC sessions</div>
+    <div class="flow-line">&nbsp;&nbsp;&nbsp;&nbsp;├── Synthesizes action items</div>
+    <div class="flow-line">&nbsp;&nbsp;&nbsp;&nbsp;├── Sends Slack DM + email</div>
+    <div class="flow-line">&nbsp;&nbsp;&nbsp;&nbsp;└── Writes to <span class="gr">00_System/aq-context/</span> <span class="cm">(CC reads these too)</span></div>
+  </div>
+</section>
+
+<!-- STEP 1 -->
+<section class="card" id="step1">
+  <h2><span class="step-num">1</span> Create the Folder Structure</h2>
+  <p>Create this folder structure in your Obsidian vault (or any local folder both Claude Code and Amazon Quick can access):</p>
+  <div class="code-wrap">
+    <div class="code-header"><span>Folder Structure</span><button class="copy-btn" data-copy="1">Copy</button></div>
+<pre>00_System/
+├── identity/
+│   ├── soul.md              <span class="cm">← Agent personality &amp; behavioral rules</span>
+│   └── user.md              <span class="cm">← Your preferences &amp; project context</span>
+├── brand-context/
+│   ├── design-system.md     <span class="cm">← Pointer to your design system docs</span>
+│   ├── brand-assets.md      <span class="cm">← Pointer to brand asset locations</span>
+│   └── voice-and-tone.md    <span class="cm">← Writing guidelines</span>
+├── manifest/
+│   └── <span class="cm">(SKILL_MANIFEST.md will be auto-generated here)</span>
+├── aq-context/
+│   └── <span class="cm">(morning brief + context sync files written here daily)</span>
+├── knowledge/
+│   ├── learnings/           <span class="cm">← Extracted [LEARNING] tags</span>
+│   ├── patterns/            <span class="cm">← Extracted [PATTERN] tags</span>
+│   ├── decisions/           <span class="cm">← Extracted [DECISION] tags</span>
+│   └── COMPOUND_KNOWLEDGE.md  <span class="cm">← Auto-synthesized compound knowledge</span>
+├── sessions/                <span class="cm">← Raw CC session logs</span>
+└── KNOWLEDGE_SYSTEM.md      <span class="cm">← Docs for the tag extraction system</span></pre>
+  </div>
+
+  <h3 id="identity-files">Write the identity files</h3>
+  <h4>soul.md — How both agents should behave</h4>
+  <p>Customize for your role:</p>
+  <div class="code-wrap">
+    <div class="code-header"><span>soul.md</span><button class="copy-btn" data-copy="1">Copy</button></div>
+<pre><span class="cm"># Agent Identity</span>
+
+<span class="cm">## Role</span>
+<span class="str">[Your role — e.g., "Senior UX designer for a platform team"]</span>
+
+<span class="cm">## Communication Style</span>
+- <span class="str">[Your preference — e.g., "Direct, concise — bullet points over paragraphs"]</span>
+- Proactively tag [LEARNING], [PATTERN], [DECISION] in CC sessions
+- Reference vault knowledge before giving advice
+
+<span class="cm">## Priorities</span>
+1. <span class="str">[Your top priority — e.g., "Design quality"]</span>
+2. <span class="str">[Second priority — e.g., "Speed"]</span>
+3. Knowledge capture (every session should leave traces)
+
+<span class="cm">## Guardrails</span>
+- Never delete or overwrite data without explicit confirmation
+- Validate changes before declaring done
+- Check if a relevant skill exists before writing code from scratch</pre>
+  </div>
+
+  <h4>user.md — Your preferences and project context</h4>
+  <div class="code-wrap">
+    <div class="code-header"><span>user.md</span><button class="copy-btn" data-copy="1">Copy</button></div>
+<pre><span class="cm"># User Preferences</span>
+
+<span class="cm">## Working Style</span>
+- <span class="str">[How you like outputs formatted]</span>
+- <span class="str">[Tools you use daily]</span>
+- <span class="str">[Any preferences for communication]</span>
+
+<span class="cm">## Project Context</span>
+- Primary projects: <span class="str">[list your active projects]</span>
+- Design System: <span class="str">[what you use]</span>
+- Deploy method: <span class="str">[Vercel, Netlify, internal, etc.]</span>
+- VCS: <span class="str">[GitHub, GitLab, internal, etc. — or "none for some projects"]</span>
+
+<span class="cm">## Feedback History</span>
+(Updated automatically by the wrap-up skill)</pre>
+  </div>
+
+  <h3 id="brand-context">Write brand-context pointer files</h3>
+  <p>These don't duplicate assets — they just tell agents where to find the source of truth:</p>
+  <div class="code-wrap">
+    <div class="code-header"><span>design-system.md</span><button class="copy-btn" data-copy="1">Copy</button></div>
+<pre><span class="cm"># design-system.md</span>
+Source: <span class="str">[path to your design system skill or docs]</span>
+Live docs: <span class="str">[URL if applicable]</span>
+Key conventions: <span class="str">[e.g., "Internal packages, orange buttons"]</span></pre>
+  </div>
+</section>
+
+<!-- STEP 2 -->
+<section class="card" id="step2">
+  <h2><span class="step-num">2</span> Set Up the Knowledge Capture Pipeline</h2>
+  <p>This is the backbone — it captures knowledge from every Claude Code session automatically.</p>
+
+  <h3 id="session-tracker">2a. Session Tracker Hook</h3>
+  <p>Create <code>~/.claude/skills/obsidian-save/hooks/user-prompt-tracker.sh</code> — a Claude Code <code>UserPromptSubmit</code> hook that:</p>
+  <ul>
+    <li>Creates a session file on first message (<code>YYYYMMDD-{slug}.md</code>)</li>
+    <li>Appends each user message with timestamp</li>
+    <li>Saves to <code>00_System/sessions/</code></li>
+  </ul>
+  <p>Register it in <code>~/.claude/settings.json</code>:</p>
+  <div class="code-wrap">
+    <div class="code-header"><span>settings.json</span><button class="copy-btn" data-copy="1">Copy</button></div>
+<pre>{
+  <span class="str">"hooks"</span>: {
+    <span class="str">"UserPromptSubmit"</span>: [
+      {
+        <span class="str">"matcher"</span>: <span class="str">"*"</span>,
+        <span class="str">"hooks"</span>: [
+          {
+            <span class="str">"type"</span>: <span class="str">"command"</span>,
+            <span class="str">"command"</span>: <span class="str">"/path/to/your/hooks/user-prompt-tracker.sh"</span>
+          }
+        ]
+      }
+    ]
+  }
+}</pre>
+  </div>
+
+  <h3 id="session-finalizer">2b. Session Finalizer (launchd)</h3>
+  <p>Create <code>~/.claude/skills/obsidian-save/hooks/session-finalizer.sh</code> — runs every 5 minutes via launchd:</p>
+  <ol>
+    <li><strong>Renames</strong> sessions with generic IDs based on key term extraction</li>
+    <li><strong>Extracts</strong> <code>[LEARNING]</code>, <code>[PATTERN]</code>, <code>[DECISION]</code> tagged blocks → individual files</li>
+    <li><strong>Auto-closes</strong> sessions idle for 30+ minutes (flips <code>status: active → completed</code>)</li>
+    <li><strong>Triggers</strong> compound synthesis (step 2c) and manifest generation (step 3b)</li>
+  </ol>
+  <p>Create a launchd plist at <code>~/Library/LaunchAgents/com.claude.session-finalizer.plist</code>:</p>
+  <div class="code-wrap">
+    <div class="code-header"><span>com.claude.session-finalizer.plist</span><button class="copy-btn" data-copy="1">Copy</button></div>
+<pre><span class="kw">&lt;?xml</span> <span class="attr">version</span>=<span class="str">"1.0"</span> <span class="attr">encoding</span>=<span class="str">"UTF-8"</span><span class="kw">?&gt;</span>
+<span class="kw">&lt;!DOCTYPE</span> plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd"<span class="kw">&gt;</span>
+<span class="tag">&lt;plist</span> <span class="attr">version</span>=<span class="str">"1.0"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;dict&gt;</span>
+    <span class="tag">&lt;key&gt;</span>Label<span class="tag">&lt;/key&gt;</span>
+    <span class="str">&lt;string&gt;com.claude.session-finalizer&lt;/string&gt;</span>
+    <span class="tag">&lt;key&gt;</span>ProgramArguments<span class="tag">&lt;/key&gt;</span>
+    <span class="tag">&lt;array&gt;</span>
+        <span class="str">&lt;string&gt;/bin/bash&lt;/string&gt;</span>
+        <span class="str">&lt;string&gt;/path/to/hooks/session-finalizer.sh&lt;/string&gt;</span>
+    <span class="tag">&lt;/array&gt;</span>
+    <span class="tag">&lt;key&gt;</span>StartInterval<span class="tag">&lt;/key&gt;</span>
+    <span class="tag">&lt;integer&gt;</span>300<span class="tag">&lt;/integer&gt;</span>
+    <span class="tag">&lt;key&gt;</span>RunAtLoad<span class="tag">&lt;/key&gt;</span>
+    <span class="tag">&lt;true/&gt;</span>
+    <span class="tag">&lt;key&gt;</span>StandardOutPath<span class="tag">&lt;/key&gt;</span>
+    <span class="str">&lt;string&gt;/Users/YOU/.claude/logs/session-finalizer.log&lt;/string&gt;</span>
+    <span class="tag">&lt;key&gt;</span>StandardErrorPath<span class="tag">&lt;/key&gt;</span>
+    <span class="str">&lt;string&gt;/Users/YOU/.claude/logs/session-finalizer.log&lt;/string&gt;</span>
+<span class="tag">&lt;/dict&gt;</span>
+<span class="tag">&lt;/plist&gt;</span></pre>
+  </div>
+  <p>Load it:</p>
+  <div class="code-wrap">
+    <div class="code-header"><span>bash</span><button class="copy-btn" data-copy="1">Copy</button></div>
+<pre><span class="fn">launchctl</span> load ~/Library/LaunchAgents/com.claude.session-finalizer.plist</pre>
+  </div>
+
+  <h3 id="compound-synthesis">2c. Compound Knowledge Synthesis</h3>
+  <p>Create <code>~/.claude/skills/obsidian-save/hooks/synthesize-knowledge.sh</code>:</p>
+  <ul>
+    <li>Checks if any new learnings/patterns/decisions exist since last synthesis</li>
+    <li>If yes → runs <code>claude -p</code> (headless) to read ALL source files + existing COMPOUND_KNOWLEDGE.md</li>
+    <li>Folds new entries into existing themes (preserves theme stability across runs)</li>
+    <li>Writes <code>00_System/knowledge/COMPOUND_KNOWLEDGE.md</code></li>
+  </ul>
+  <p><strong>Key:</strong> This uses an LLM call (<code>claude -p</code>) but only runs when new material exists. The prompt tells Claude to preserve existing themes and fold new entries in, so the file gets smarter over time without losing structure.</p>
+  <p>Run manually with: <code>synthesize-knowledge.sh --force</code></p>
+
+  <h3 id="tag-your-work">2d. Tag Your Work</h3>
+  <p>During Claude Code sessions, tag insights inline:</p>
+  <div class="code-wrap">
+    <div class="code-header"><span>Example Tags</span><button class="copy-btn" data-copy="1">Copy</button></div>
+<pre><span class="kw">[LEARNING: Strict CSP blocks external WebSocket connections]</span>
+Live demos must run localhost-only — a strict Content Security Policy
+rejects external WebSocket connections silently.
+
+<span class="kw">[PATTERN: OAuth one-click setup]</span>
+<span class="fn">curl</span> -X POST <span class="str">"$AUTH_URL"</span> -d <span class="str">"grant_type=authorization_code&amp;code=$CODE"</span>
+Reduces 5-step manual setup to one copy-paste.
+
+<span class="kw">[DECISION: Use iframe-isolated pattern for embedded shell]</span>
+Trade-off: More complex initial setup, but better user testing isolation.
+Chosen over inline approach because of CSP constraints.</pre>
+  </div>
+  <p>The session-finalizer extracts these automatically every 5 minutes.</p>
+</section>
+
+<!-- STEP 3 -->
+<section class="card" id="step3">
+  <h2><span class="step-num">3</span> Self-Maintenance</h2>
+
+  <h3 id="heartbeat">3a. Heartbeat (CLAUDE.md)</h3>
+  <p>Add this to the TOP of your <code>~/.claude/CLAUDE.md</code>:</p>
+  <div class="code-wrap">
+    <div class="code-header"><span>CLAUDE.md</span><button class="copy-btn" data-copy="1">Copy</button></div>
+<pre><span class="cm"># Session Start (Heartbeat)</span>
+On first message of a new session, read these files for context:
+1. <span class="fn">`cat ~/path/to/00_System/identity/user.md`</span>   <span class="cm">← preferences</span>
+2. <span class="fn">`cat ~/path/to/00_System/knowledge/COMPOUND_KNOWLEDGE.md`</span> <span class="cm">← compound learnings</span>
+3. <span class="fn">`cat ~/.claude/SKILL_MANIFEST.md`</span>             <span class="cm">← current skill registry (if it exists)</span>
+
+Do this silently — don't announce you're reading them.</pre>
+  </div>
+  <p>This gives Claude Code ambient context on every session start — your preferences, accumulated knowledge, and available skills.</p>
+
+  <h3 id="skill-manifest">3b. Skill Manifest Generator</h3>
+  <p>Create <code>~/.claude/skills/obsidian-save/hooks/generate-manifest.sh</code>:</p>
+  <ul>
+    <li>Scans every <code>~/.claude/skills/*/SKILL.md</code> for YAML frontmatter</li>
+    <li>Writes <code>~/.claude/SKILL_MANIFEST.md</code> with a routing table (name + description per skill)</li>
+    <li>Detects overlapping skills (shared trigger keywords)</li>
+    <li>Called by session-finalizer after synthesis</li>
+  </ul>
+  <p><strong>Every skill needs YAML frontmatter</strong> for the manifest to pick it up:</p>
+  <div class="code-wrap">
+    <div class="code-header"><span>SKILL.md frontmatter</span><button class="copy-btn" data-copy="1">Copy</button></div>
+<pre><span class="kw">---</span>
+<span class="attr">name</span>: <span class="str">my-skill</span>
+<span class="attr">description</span>: <span class="str">What this skill does. Triggers on keyword1, keyword2, keyword3.</span>
+<span class="kw">---</span></pre>
+  </div>
+
+  <h3 id="wrap-up">3c. Wrap-Up Skill</h3>
+  <p>Create <code>~/.claude/skills/wrap-up/SKILL.md</code> — triggered by <code>/wrap-up</code>, "close session", or "done for now":</p>
+  <ol>
+    <li>List deliverables (git status or recently modified files)</li>
+    <li>Persist work (git-agnostic — commit if <code>.git/</code>, deploy if applicable, else confirm saved)</li>
+    <li>Write 3-5 line session summary to the active session file</li>
+    <li>Run <code>generate-manifest.sh</code></li>
+  </ol>
+</section>
+
+<!-- STEP 4 -->
+<section class="card" id="step4">
+  <h2><span class="step-num">4</span> Amazon Quick Integration</h2>
+
+  <h3 id="connect-tools">4a. Connect Your Tools</h3>
+  <p>In Amazon Quick, go to <strong>Settings → Capabilities → Connections</strong> and connect:</p>
+  <ul>
+    <li><strong>Slack</strong> — for channel scanning</li>
+    <li><strong>Outlook</strong> — for email + calendar</li>
+    <li><strong>Local folders</strong> — add your vault folder (e.g., <code>~/Documents/your-vault/</code>)</li>
+  </ul>
+
+  <h3 id="morning-brief">4b. Morning Brief Agent</h3>
+  <p>Create a scheduled agent in Amazon Quick that runs daily. This is the orchestration centerpiece — it pulls from all your connected systems and writes a comprehensive morning brief.</p>
+  <h4>What it does each morning:</h4>
+  <ol>
+    <li><strong>Scans Slack channels</strong> (last 24 hrs) — extracts decisions, action items, design feedback</li>
+    <li><strong>Scans email inbox</strong> (last 24 hrs) — flags meeting invites, requests needing response, deadlines</li>
+    <li><strong>Reads Asana tasks</strong> — open tasks due this week, overdue, completed yesterday</li>
+    <li><strong>Reads today's calendar</strong> — meetings, conflicts, OOO teammates</li>
+    <li><strong>Reads yesterday's CC sessions</strong> — what was worked on</li>
+    <li><strong>Reads skill manifest</strong> — any changes to the skill registry</li>
+    <li><strong>Synthesizes ⚡ Action Items</strong> at the top — prioritized by urgency</li>
+  </ol>
+  <h4>Delivers via:</h4>
+  <ul>
+    <li>Slack DM (scannable on mobile)</li>
+    <li>Email (for reference)</li>
+    <li>Vault file at <code>00_System/aq-context/morning-brief.md</code> (for CC to read on session start)</li>
+  </ul>
+  <h4>Schedule timezone reference:</h4>
+  <p>Configure the schedule for your timezone (the <code>time_of_day</code> setting uses UTC internally):</p>
+  <ul>
+    <li>6:00 AM PDT = <code>13:00</code> UTC</li>
+    <li>6:00 AM PST = <code>14:00</code> UTC</li>
+    <li>9:00 AM EST = <code>14:00</code> UTC</li>
+  </ul>
+
+  <h3 id="context-sync">4c. Additional Context Sync</h3>
+  <p>The same agent also writes:</p>
+  <ul>
+    <li><code>people-context.md</code> — collaborators by project from the Knowledge Graph</li>
+    <li><code>recent-decisions.md</code> — decisions from Slack/email/meetings (last 7 days)</li>
+    <li><code>project-status.md</code> — active project snapshot</li>
+  </ul>
+  <p>These give Claude Code ambient awareness of your work relationships and project status.</p>
+</section>
+
+<!-- STEP 5 -->
+<section class="card" id="step5">
+  <h2><span class="step-num">5</span> Retroactive Knowledge Sweep <span style="font-size:.85rem;color:var(--text-dim);font-weight:400">(Optional)</span></h2>
+  <p>If you already have Claude Code session history, you can extract knowledge retroactively:</p>
+  <ol>
+    <li>Ask Claude Code to read all your session files</li>
+    <li>For each session, identify learnings/patterns/decisions that should have been tagged</li>
+    <li>Write them to the appropriate <code>knowledge/</code> folders</li>
+    <li>Run <code>synthesize-knowledge.sh --force</code> to rebuild COMPOUND_KNOWLEDGE.md</li>
+  </ol>
+  <p>This dramatically enriches your compound knowledge from day one — a representative sweep can extract dozens of insights from a hundred-plus existing sessions.</p>
+</section>
+
+<!-- Customization Tips -->
+<section class="card" id="customization">
+  <h2>Customization Tips</h2>
+  <ul>
+    <li><strong>Slack channels:</strong> Configure which channels to full-scan vs. mention-only scan</li>
+    <li><strong>Soul.md:</strong> Tailor the agent personality to your role and domain</li>
+    <li><strong>Brand context:</strong> Point to your team's design system (Material, Cloudscape, custom, etc.)</li>
+    <li><strong>Skill manifest:</strong> Every skill with frontmatter gets auto-registered</li>
+    <li><strong>Morning brief timing:</strong> Adjust the UTC schedule time for your timezone</li>
+    <li><strong>Auto-close threshold:</strong> 30 minutes is the default; adjust in session-finalizer.sh</li>
+  </ul>
+</section>
+
+<!-- Troubleshooting -->
+<section class="card" id="troubleshooting">
+  <h2>Troubleshooting</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Issue</th><th>Fix</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>COMPOUND_KNOWLEDGE.md not updating</td>
+          <td>Check <code>~/.claude/logs/synthesize-knowledge.log</code>. Run <code>synthesize-knowledge.sh --force</code> manually.</td>
+        </tr>
+        <tr>
+          <td>Morning brief not arriving</td>
+          <td>Check <code>get_agent_run_history</code> in AQ. Verify schedule_time is in UTC.</td>
+        </tr>
+        <tr>
+          <td>Session-finalizer not running</td>
+          <td><code>launchctl list | grep session-finalizer</code>. Check the log file.</td>
+        </tr>
+        <tr>
+          <td>Slack DM not visible</td>
+          <td>Check your self-DMs in Slack — the agent sends as you.</td>
+        </tr>
+        <tr>
+          <td>Skills missing from manifest</td>
+          <td>Ensure each skill has <code>---</code> YAML frontmatter with <code>name:</code> and <code>description:</code>.</td>
+        </tr>
+        <tr>
+          <td>No tags being extracted</td>
+          <td>Claude Code needs <code>[LEARNING: Title]</code> format exactly — check KNOWLEDGE_SYSTEM.md for syntax.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+</main>
+</div>
+
+<!-- Arch modal -->
+<div class="arch-modal" id="archModal" role="dialog" aria-label="Architecture diagram fullscreen">
+  <div class="arch-modal-header">
+    <div class="arch-modal-title">Architecture Overview</div>
+    <div class="arch-modal-controls">
+      <button class="arch-ctrl" type="button" id="archZoomOut" aria-label="Zoom out">−</button>
+      <button class="arch-ctrl" type="button" id="archZoomIn" aria-label="Zoom in">+</button>
+      <button class="arch-ctrl" type="button" id="archReset" aria-label="Reset zoom">⟲</button>
+      <button class="arch-ctrl close" type="button" id="archClose" aria-label="Close">Close ✕</button>
+    </div>
+  </div>
+  <div class="arch-modal-canvas" id="archCanvas"></div>
+</div>
+
+<script>
+function copyCode(btn){
+  const pre=btn.closest('.code-wrap').querySelector('pre');
+  const text=pre.textContent;
+  navigator.clipboard.writeText(text).then(()=>{
+    btn.textContent='Copied!';btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='Copy';btn.classList.remove('copied')},2000);
+  });
+}
+document.addEventListener('click',e=>{
+  const cb=e.target.closest('.copy-btn');
+  if(cb)copyCode(cb);
+});
+
+// Quick Start: copy AQ prompt
+function copyAQPrompt(btn){
+  const text=document.getElementById('aqPrompt').textContent;
+  navigator.clipboard.writeText(text).then(()=>{
+    const orig=btn.innerHTML;
+    btn.innerHTML='✓ Copied — paste into Amazon Quick';
+    btn.classList.add('copied');
+    setTimeout(()=>{btn.innerHTML=orig;btn.classList.remove('copied')},2500);
+  });
+}
+// Quick Start: download AQ prompt
+function downloadAQPrompt(){
+  const text=document.getElementById('aqPrompt').textContent;
+  const blob=new Blob([text],{type:'text/markdown'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download='agentic-os-setup.md';
+  document.body.appendChild(a);a.click();
+  document.body.removeChild(a);URL.revokeObjectURL(url);
+}
+// Close sidebar on mobile when clicking a link
+document.querySelectorAll('.toc-link').forEach(l=>l.addEventListener('click',()=>{
+  if(window.innerWidth<=900)document.querySelector('.sidebar').classList.remove('open');
+}));
+
+// Scrollspy — mark all sections above the current viewport as visited (blue)
+const tocLinks=[...document.querySelectorAll('.sidebar .toc-link[href^="#"]')];
+const tocMap=tocLinks.map(a=>({link:a,target:document.getElementById(a.getAttribute('href').slice(1))})).filter(x=>x.target);
+const cardSections=[...document.querySelectorAll('section.card[id]')];
+function updateScrollSpy(){
+  const threshold=Math.max(200, window.innerHeight*0.55);
+  let activeIdx=-1;
+  tocMap.forEach((x,i)=>{
+    if(x.target.getBoundingClientRect().top<=threshold)activeIdx=i;
+  });
+  tocMap.forEach((x,i)=>{
+    x.link.classList.toggle('visited',i<activeIdx);
+    x.link.classList.toggle('active',i===activeIdx);
+  });
+  let activeCardIdx=-1;
+  cardSections.forEach((s,i)=>{
+    if(s.getBoundingClientRect().top<=threshold)activeCardIdx=i;
+  });
+  cardSections.forEach((s,i)=>{
+    s.classList.toggle('visited',i<activeCardIdx);
+    s.classList.toggle('active',i===activeCardIdx);
+    const n=s.querySelector(':scope > h2 > .step-num');
+    if(n){
+      n.classList.toggle('visited',i<activeCardIdx);
+      n.classList.toggle('active',i===activeCardIdx);
+    }
+  });
+}
+window.addEventListener('scroll',updateScrollSpy,{passive:true});
+updateScrollSpy();
+const sidebarToggle=document.getElementById('sidebarToggle');
+if(sidebarToggle)sidebarToggle.addEventListener('click',()=>document.querySelector('.sidebar').classList.toggle('open'));
+const backToTop=document.getElementById('backToTop');
+if(backToTop){
+  backToTop.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+  window.addEventListener('scroll',()=>backToTop.classList.toggle('visible',window.scrollY>400),{passive:true});
+}
+
+// Arch diagram modal + zoom/pan
+let archScale=1, archTx=0, archTy=0, dragging=false, startX=0, startY=0;
+const archModal=document.getElementById('archModal');
+const archCanvas=document.getElementById('archCanvas');
+function applyArchTransform(){
+  const svg=archCanvas.querySelector('svg');
+  if(!svg)return;
+  svg.style.transform=`translate(calc(-50% + ${archTx}px), calc(-50% + ${archTy}px)) scale(${archScale})`;
+}
+function openArchModal(){
+  const src=document.getElementById('archSvg');
+  const clone=src.cloneNode(true);
+  clone.removeAttribute('id');
+  archCanvas.innerHTML='';
+  archCanvas.appendChild(clone);
+  archScale=1;archTx=0;archTy=0;
+  applyArchTransform();
+  archModal.classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeArchModal(){
+  archModal.classList.remove('open');
+  document.body.style.overflow='';
+}
+function zoomArch(delta){
+  archScale=Math.min(4,Math.max(0.3,archScale+delta));
+  applyArchTransform();
+}
+function resetArch(){archScale=1;archTx=0;archTy=0;applyArchTransform();}
+archCanvas.addEventListener('mousedown',e=>{dragging=true;startX=e.clientX-archTx;startY=e.clientY-archTy;archCanvas.classList.add('dragging');});
+window.addEventListener('mousemove',e=>{if(!dragging)return;archTx=e.clientX-startX;archTy=e.clientY-startY;applyArchTransform();});
+window.addEventListener('mouseup',()=>{dragging=false;archCanvas.classList.remove('dragging');});
+archCanvas.addEventListener('wheel',e=>{e.preventDefault();zoomArch(e.deltaY<0?0.1:-0.1);},{passive:false});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&archModal.classList.contains('open'))closeArchModal();});
+document.getElementById('archExpandBtn').addEventListener('click',openArchModal);
+document.getElementById('archZoomOut').addEventListener('click',()=>zoomArch(-0.2));
+document.getElementById('archZoomIn').addEventListener('click',()=>zoomArch(0.2));
+document.getElementById('archReset').addEventListener('click',resetArch);
+document.getElementById('archClose').addEventListener('click',closeArchModal);
+</script>
+</body>
+</html>

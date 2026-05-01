@@ -1,0 +1,17 @@
+# Build output
+/build
+/dist
+/node_modules
+
+# OS / editor
+.DS_Store
+*.code-workspace
+
+# Local logs and runtime artifacts
+/logs
+*.log
+
+# Claude / local dev state
+/.claude
+/.harmony
+/.playwright-mcp
